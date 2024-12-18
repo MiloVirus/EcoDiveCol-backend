@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,10 +12,10 @@ model Usuarios {
   password   String
   first_name String
   last_name  String
-  phone      Int
-  email      String
+  phone      Int         @unique
+  email      String      @unique
   city       String
-  PADL_NAU   String
+  PADI_NAUI_ID   String   @unique
   rol        String
   bookings   Bookings[]
   reviews    Reviews[]
