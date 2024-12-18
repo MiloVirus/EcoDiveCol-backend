@@ -12,11 +12,11 @@ model Usuarios {
   password   String
   first_name String
   last_name  String
-  phone      Int         @unique
+  phone      Int?         @unique
   email      String      @unique
-  city       String
-  PADI_NAUI_ID   String   @unique
-  rol        String
+  city       String?
+  PADI_NAUI_ID   String?   @unique
+  rol        String?
   bookings   Bookings[]
   reviews    Reviews[]
   logs       Logros[]
