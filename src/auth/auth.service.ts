@@ -1,23 +1,25 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Usuarios } from '@prisma/client';
 import { UsersService } from 'src/users/users.service';
+import { SignInDto } from './sign-in.dto';
 
 @Injectable()
 export class AuthService {
     constructor( private users: UsersService, private jwtService: JwtService){}
 
-    async signIn(data: Usuarios): Promise<{token: string}>
+    async signIn(signInDto: SignInDto): Promise<{email:string, msg:string, token: string}>
     {
-        const user = await this.users.getUserById(data.user_id)
+        const {email, password} = signInDto
+
+        const user = await this.users.getUserById(email)
 
         if(!user)
         {
             throw new UnauthorizedException('Credenciales Incorrectas')
         }
 
-        const isPasswordValid = await bcrypt.compare(data.password, user.password)
+        const isPasswordValid = await bcrypt.compare(password, user.password)
 
         if(!isPasswordValid)
         {
@@ -30,6 +32,10 @@ export class AuthService {
             expiresIn: '1h'
         })
 
-        return {token}
+        return {
+            msg: 'login successful',
+            email,
+            token, 
+        }
     }
 }

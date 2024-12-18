@@ -13,10 +13,10 @@ export class UsersService {
             return await this.prisma.usuarios.findMany()
         }
 
-        async getUserById(user_id: string): Promise<Usuarios> {
+        async getUserById(email: string): Promise<Usuarios> {
             return await this.prisma.usuarios.findUnique({
             where: {
-                user_id,
+                email,
             },
         });
         }
