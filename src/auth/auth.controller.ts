@@ -21,8 +21,7 @@ export class AuthController {
 
         return res.json({
             msg,
-            email,
-            token
+            email
         });
     }
 
@@ -31,4 +30,15 @@ export class AuthController {
     getProfile(@Request() req) {
         return req.user;
     }
+
+    @Post('logout')
+    signOut(@Res() res: Response){
+        res.clearCookie('access_token', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict'
+        })
+        return {message: 'Logout Succesful'}
+    }
+
 }
