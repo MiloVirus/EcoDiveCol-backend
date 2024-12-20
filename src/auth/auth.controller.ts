@@ -1,22 +1,26 @@
-import { Controller, HttpCode, HttpStatus, Post, Body, UseGuards, Get, Request, Res } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Post, Body, UseGuards, Get, Res, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './sign-in.dto';
 import { AuthGuard } from './auth.guard';
-import { Response } from 'express';
+import { Response, Request } from 'express';
+import * as jwt from 'jsonwebtoken'
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService) { }
 
     @HttpCode(HttpStatus.OK)
     @Post('login')
     async signIn(@Body() signInDto: SignInDto, @Res() res: Response) {
         const { email, msg, token } = await this.authService.signIn(signInDto); // Esperar el resultado del servicio
+        console.log('Token generado:', token);  // Para verificar el token
 
         res.cookie('access_token', token, {
             httpOnly: true, 
             secure: process.env.NODE_ENV === 'production', 
-            maxAge: 3600000, 
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000, 
+            path: '/', 
         });
 
         return res.json({
@@ -25,20 +29,34 @@ export class AuthController {
         });
     }
 
+    @Get('check')
+    checkAuth(@Req() req: Request, @Res() res: Response) {
+        const token = req.cookies['access_token'];
+
+        if (token) {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET)
+            return res.json({ isAuthenticated: true, user: decoded });
+        } else {
+            return res.status(HttpStatus.UNAUTHORIZED).json({ isAuthenticated: false, message: 'Token inválido o expirado' });
+        }
+    }
+
     @UseGuards(AuthGuard)
     @Get('profile')
-    getProfile(@Request() req) {
+    getProfile(@Req() req) {
         return req.user;
     }
 
     @Post('logout')
-    signOut(@Res() res: Response){
+    signOut(@Res() res: Response) {
         res.clearCookie('access_token', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict'
-        })
-        return {message: 'Logout Succesful'}
+            sameSite: 'lax',
+            path: '/',
+        });
+        return res.status(200).json({ message: 'Logout Successful', isAuthenticated: false });
+        
     }
 
 }
