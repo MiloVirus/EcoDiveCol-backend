@@ -12,8 +12,8 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     @Post('login')
     async signIn(@Body() signInDto: SignInDto, @Res() res: Response) {
-        const { email, msg, token } = await this.authService.signIn(signInDto); // Esperar el resultado del servicio
-        console.log('Token generado:', token);  // Para verificar el token
+        const { email, msg, token } = await this.authService.signIn(signInDto); 
+        console.log('Token generado:', token); 
 
         res.cookie('access_token', token, {
             httpOnly: true, 
@@ -35,7 +35,12 @@ export class AuthController {
 
         if (token) {
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
-            return res.json({ isAuthenticated: true, user: decoded });
+
+            const userInfo = {
+                id: decoded.sub,
+                
+            }
+            return res.json({ isAuthenticated: true, user: userInfo });
         } else {
             return res.status(HttpStatus.UNAUTHORIZED).json({ isAuthenticated: false, message: 'Token inválido o expirado' });
         }
