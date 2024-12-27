@@ -17,6 +17,9 @@ model Usuarios {
   city       String?
   PADI_NAUI_ID   String?   @unique
   rol        String?
+  rango      String?
+  curr_puntos Int?
+  all_time_puntos Int?
   bookings   Bookings[]
   reviews    Reviews[]
   logs       UsuariosOnLogros[]

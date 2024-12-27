@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { Usuarios } from '@prisma/client';
+import { UsuariosOnLogros } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './create-user.dto';
 import { plainToInstance } from 'class-transformer';
@@ -49,5 +50,15 @@ export class UsersService {
         {
             return await this.prisma.usuarios.findMany()
         }
+
+        async addUserLogro(sub: string, logro_id: string): Promise<UsuariosOnLogros>
+        {
+            return this.prisma.usuariosOnLogros.create({
+            data:{
+                user_id: sub,
+                logro_id: logro_id
+            }
+        })
+    }
     
 }

@@ -4,10 +4,11 @@ import { SignInDto } from './sign-in.dto';
 import { AuthGuard } from './auth.guard';
 import { Response, Request } from 'express';
 import * as jwt from 'jsonwebtoken'
+import { UsersService } from 'src/users/users.service';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) { }
+    constructor(private authService: AuthService, private userService: UsersService) { }
 
     @HttpCode(HttpStatus.OK)
     @Post('login')
@@ -62,6 +63,20 @@ export class AuthController {
         });
         return res.status(200).json({ message: 'Logout Successful', isAuthenticated: false });
         
+    }
+
+    @UseGuards(AuthGuard)
+    @Post('assign-logro')
+    async assignLogro(@Body() body, @Req() req, @Res() res: Response) {
+        const { logro_id } = body;
+        const  user_id = req.user.sub;
+
+        try {
+            const result =  await this.userService.addUserLogro(user_id, logro_id);
+            return res.status(201).json({ message: 'Logro asignado correctamente', result });
+        } catch (error) {
+            return res.status(500).json({ message: 'Error al asignar logro', error });
+        }  
     }
 
 }
