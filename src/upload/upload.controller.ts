@@ -18,7 +18,6 @@ export class UploadController {
     @UseInterceptors(
         FileInterceptor('file', {
             storage: diskStorage({
-                destination: './uploads',
                 filename: (req, file, callback) => {
                     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
                     const ext = extname(file.originalname);
@@ -39,7 +38,9 @@ export class UploadController {
             throw new BadRequestException('File upload failed');
         }
 
-        
+        const fileName = `${Date.now()}-${file.originalname}`
+        const s3Url = await this.uploadService.uploadFileToS3(file.path, fileName);
+
         const imageBase64 = await this.uploadService.convertImageToBase64(file.path);
 
         const detectedLabels = await this.uploadService.processImageWithApiKey(imageBase64);
@@ -53,6 +54,7 @@ export class UploadController {
                 ? 'Image meets the criteria for the achievement!'
                 : 'Image does not meet the criteria.',
             detectedLabels,
+            s3Url,
         };
     }
 }

@@ -1,10 +1,49 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { Upload } from '@aws-sdk/lib-storage';
 import { promises as fs } from 'fs';
+import { S3Client } from '@aws-sdk/client-s3';
 
 @Injectable()
 export class UploadService {
+    private s3Client: S3Client
+    private bucketName: string;
 
+    constructor() {
+        this.s3Client = new S3Client({
+            region: process.env.AWS_REGION,
+            credentials: {
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            },
+        });
+        this.bucketName = process.env.AWS_S3_BUCKET_NAME;
+    }
+
+    async uploadFileToS3(filePath: string, fileName: string): Promise<string> {
+        try {
+            const fileContent = await fs.readFile(filePath);
+            const uploadParams = {
+                Bucket: this.bucketName,
+                Key: fileName,
+                Body: fileContent,
+            };
+
+            const upload = new Upload({
+                client: this.s3Client,
+                params: uploadParams,
+            })
+
+            const data = await upload.done();
+            console.log(`File uploaded successfully at ${data.Location}`);
+            return data.Location;
+        }
+        catch(error)
+        {
+            console.error("Error uploading file to S3:", error);
+            throw new Error('Could not upload file to S3.');
+        }
+    }
     async convertImageToBase64(filePath: string): Promise<string> {
         try {
             const imageBuffer = await fs.readFile(filePath);
