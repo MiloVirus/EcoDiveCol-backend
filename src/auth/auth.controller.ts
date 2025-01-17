@@ -64,19 +64,4 @@ export class AuthController {
         return res.status(200).json({ message: 'Logout Successful', isAuthenticated: false });
         
     }
-
-    @UseGuards(AuthGuard)
-    @Post('assign-logro')
-    async assignLogro(@Body() body, @Req() req, @Res() res: Response) {
-        const { logro_id } = body;
-        const  user_id = req.user.sub;
-
-        try {
-            const result =  await this.userService.addUserLogro(user_id, logro_id);
-            return res.status(201).json({ message: 'Logro asignado correctamente', result });
-        } catch (error) {
-            return res.status(500).json({ message: 'Error al asignar logro', error });
-        }  
-    }
-
 }

@@ -59,13 +59,13 @@ export class UploadController {
             const s3Url = await this.uploadService.uploadFileToS3(file.path, fileName);
             return {
                 message: isValid
-                    ? 'Image meets the criteria for the achievement!'
-                    : 'Image does not meet the criteria.',
+                    ? 'Felicidades ¡Logro completado!'
+                    : 'La imagen no cumple los requisitos para el logro :C',
                 detectedLabels,
                 s3Url,
             };
         }else{
-            return 'Image does not meet the criteria thus it was not uploaded.'
+            return 'La imagen no cumple los requisitos para el logro :C'
         }
     }
 }
