@@ -4,11 +4,13 @@ import {
     UploadedFile,
     UseInterceptors,
     BadRequestException,
+    Body
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { getAchievementId } from 'src/utils/labels';
 
 @Controller('upload')
 export class UploadController {
@@ -33,28 +35,37 @@ export class UploadController {
             },
         }),
     )
-    async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    async uploadFile(
+        @UploadedFile() file: Express.Multer.File,
+        @Body('logroId') logroId: string,) {
         if (!file) {
             throw new BadRequestException('File upload failed');
         }
-
+        console.log(logroId, "Achievement ID")
         const fileName = `${Date.now()}-${file.originalname}`
-        const s3Url = await this.uploadService.uploadFileToS3(file.path, fileName);
+        
 
         const imageBase64 = await this.uploadService.convertImageToBase64(file.path);
 
         const detectedLabels = await this.uploadService.processImageWithApiKey(imageBase64);
         console.log(detectedLabels, "Labels")
+        const achievementId = getAchievementId(logroId);
 
-        const expectedLabels = ['Litter', 'Plastic', 'Trash', 'Beach', 'Bottle'];
+        const expectedLabels = achievementId;
+        console.log(expectedLabels, "Expected Labels")
         const isValid = detectedLabels.some((label) => expectedLabels.includes(label));
 
-        return {
-            message: isValid
-                ? 'Image meets the criteria for the achievement!'
-                : 'Image does not meet the criteria.',
-            detectedLabels,
-            s3Url,
-        };
+        if (isValid) {
+            const s3Url = await this.uploadService.uploadFileToS3(file.path, fileName);
+            return {
+                message: isValid
+                    ? 'Image meets the criteria for the achievement!'
+                    : 'Image does not meet the criteria.',
+                detectedLabels,
+                s3Url,
+            };
+        }else{
+            return 'Image does not meet the criteria thus it was not uploaded.'
+        }
     }
 }
