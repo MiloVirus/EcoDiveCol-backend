@@ -65,7 +65,7 @@ export class UploadController {
                 s3Url,
             };
         }else{
-            return 'La imagen no cumple los requisitos para el logro :C'
+            return {message:'La imagen no cumple los requisitos para el logro :C'}
         }
     }
 }

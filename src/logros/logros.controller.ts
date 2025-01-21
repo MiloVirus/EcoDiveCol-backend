@@ -15,13 +15,13 @@ export class LogrosController {
     }
 
     @UseGuards(AuthGuard)
-    
     @Post('assign-logro')
     async assignLogro(@Body() body, @Req() req, @Res() res: Response) {
         const { logro_id } = body;
         const  user_id = req.user.sub;
 
         try {
+            console.log(user_id, logro_id);
             const result =  await this.userService.addUserLogro(user_id, logro_id);
             return res.status(201).json({ message: 'Logro asignado correctamente', result });
         } catch (error) {
