@@ -8,21 +8,21 @@ datasource db {
 }
 
 model Usuarios {
-  user_id    String      @id @default(uuid())
-  password   String
-  first_name String
-  last_name  String
-  phone      Int?         @unique
-  email      String      @unique
-  city       String?
-  PADI_NAUI_ID   String?   @unique
-  rol        String?
-  rango      String?
-  curr_puntos Int?
+  user_id         String             @id @default(uuid())
+  first_name      String
+  last_name       String
+  phone           Int?               @unique
+  email           String             @unique
+  city            String?
+  rol             String?
+  password        String
+  PADI_NAUI_ID    String?            @unique
   all_time_puntos Int?
-  bookings   Bookings[]
-  reviews    Reviews[]
-  logs       UsuariosOnLogros[]
+  curr_puntos     Int?
+  rango           String?
+  bookings        Bookings[]
+  reviews         Reviews[]
+  logs            UsuariosOnLogros[]
 }
 
 model DiveShop {
@@ -32,34 +32,34 @@ model DiveShop {
   phone       String
   email       String
   address     String
+  actividades Actividades[]
   bookings    Bookings[]
   reviews     Reviews[]
-  actividades Actividades[]
 }
 
 model Bookings {
-  booking_id      String      @id @default(uuid())
-  user_id         String
-  diveshop_id     String
-  date            DateTime
-  status          Boolean
-  user            Usuarios  @relation(fields: [user_id], references: [user_id])
-  diveshop        DiveShop  @relation(fields: [diveshop_id], references: [diveshop_id])
+  booking_id  String   @id @default(uuid())
+  user_id     String
+  diveshop_id String
+  date        DateTime
+  status      Boolean
+  diveshop    DiveShop @relation(fields: [diveshop_id], references: [diveshop_id])
+  user        Usuarios @relation(fields: [user_id], references: [user_id])
 }
 
 model Reviews {
-  review_id    String      @id @default(uuid())
-  puntuacion   Int
-  comentario   String
-  fecha        DateTime
-  user_id      String
-  diveshop_id  String
-  user         Usuarios @relation(fields: [user_id], references: [user_id])
-  diveshop     DiveShop @relation(fields: [diveshop_id], references: [diveshop_id])
+  review_id   String   @id @default(uuid())
+  puntuacion  Int
+  comentario  String
+  fecha       DateTime
+  user_id     String
+  diveshop_id String
+  diveshop    DiveShop @relation(fields: [diveshop_id], references: [diveshop_id])
+  user        Usuarios @relation(fields: [user_id], references: [user_id])
 }
 
 model Actividades {
-  actividad_id String      @id @default(uuid())
+  actividad_id String   @id @default(uuid())
   name         String
   descripcion  String
   precio       Float
@@ -68,22 +68,22 @@ model Actividades {
 }
 
 model Logros {
-  logro_id     String      @id @default(uuid())
-  name         String
-  descripcion  String
-  imagen       String
-  puntos       Int
-  user         UsuariosOnLogros[]
+  logro_id    String             @id @default(uuid())
+  name        String
+  descripcion String
+  imagen      String
+  puntos      Int
+  user        UsuariosOnLogros[]
 }
 
-model UsuariosOnLogros{
-  id           Int @id  @default(autoincrement())
-  user_id      String
-  logro_id     String
-  completado   Boolean @default(false)
-  fecha        DateTime @default(now())
-  usuario      Usuarios  @relation(fields: [user_id], references: [user_id])
-  logro        Logros    @relation(fields: [logro_id], references: [logro_id])
+model UsuariosOnLogros {
+  id         Int      @id @default(autoincrement())
+  user_id    String
+  logro_id   String
+  completado Boolean  @default(true)
+  fecha      DateTime @default(now())
+  logro      Logros   @relation(fields: [logro_id], references: [logro_id])
+  usuario    Usuarios @relation(fields: [user_id], references: [user_id])
+
   @@unique([user_id, logro_id])
-  
 }

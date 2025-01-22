@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Post, Body, Req, Res } from '@nestjs/common'
+import { Controller, Get, UseGuards, Post, Body, Req, Res, UnauthorizedException } from '@nestjs/common'
 import { Response } from 'express';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { LogrosService } from './logros.service';
@@ -8,10 +8,18 @@ import { UsersService } from 'src/users/users.service';
 export class LogrosController {
     constructor(private logros: LogrosService, private userService: UsersService){}
 
+    @UseGuards(AuthGuard)
     @Get()
-    async getLogros()
-    {
-        return this.logros.getAllAchievements()
+    async getLogrosCompletados(@Req() req) {
+        const userId = req.user.sub;
+        return this.logros.getAchievementsforUser(userId);
+    }  
+    async getLogros(@Req() req) {
+        const userId = req.user?.sub;
+        if (!userId) {
+            throw new UnauthorizedException('User ID not found');
+        }
+        return this.logros.getAllAchievements();
     }
 
     @UseGuards(AuthGuard)
