@@ -4,11 +4,12 @@ import { SignInDto } from './sign-in.dto';
 import { AuthGuard } from './auth.guard';
 import { Response, Request } from 'express';
 import * as jwt from 'jsonwebtoken'
-import { UsersService } from 'src/users/users.service';
+import { AuthenticatedRequest } from 'src/common/interfaces/request.interface';
+
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService, private userService: UsersService) { }
+    constructor(private authService: AuthService) { }
 
     @HttpCode(HttpStatus.OK)
     @Post('login')
@@ -49,7 +50,7 @@ export class AuthController {
 
     @UseGuards(AuthGuard)
     @Get('profile')
-    getProfile(@Req() req) {
+    getProfile(@Req() req: AuthenticatedRequest) {
         return req.user;
     }
 

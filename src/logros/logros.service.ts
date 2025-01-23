@@ -28,9 +28,8 @@ export class LogrosService {
 
         const completedAchievementIds = completedAchievements.map((id)=> id.logro_id)
 
-        const filteredAchievements = allAchievements.filter((achievement) => {
-            return !completedAchievementIds.includes(achievement.logro_id)
-        })
+        const filteredAchievements = allAchievements.filter((achievement) =>
+            completedAchievementIds.includes(achievement.logro_id))
 
         return filteredAchievements;
     }
