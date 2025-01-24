@@ -46,6 +46,29 @@ export class UsersService {
             })
         }
 
+        async modifyUserScore(user_id: string, curr_puntos: number): Promise<void> {
+        
+            const user = await this.prisma.usuarios.findUnique({
+                where: { user_id },
+                select: { curr_puntos: true },
+            });
+        
+            if (!user) {
+                throw new Error(`User with ID ${user_id} not found`);
+            }
+        
+            const currentPoints = user.curr_puntos ?? 0; 
+        
+            await this.prisma.usuarios.update({
+                where: { user_id },
+                data: {
+                    curr_puntos: {
+                        set: currentPoints + curr_puntos, 
+                    },
+                },
+            });
+        }
+
         async updateUser(): Promise<Usuarios[]>
         {
             return await this.prisma.usuarios.findMany()
@@ -57,8 +80,11 @@ export class UsersService {
             data:{
                 user_id: sub,
                 logro_id: logro_id
-            }
+        }
         })
+
+        
+
     }
     
 }

@@ -4,18 +4,25 @@ import {
     UploadedFile,
     UseInterceptors,
     BadRequestException,
-    Body
+    Body,
+    UseGuards
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { getAchievementId } from 'src/utils/labels';
+import { AuthenticatedRequest } from 'src/common/interfaces/request.interface';
+import { Req, Res } from '@nestjs/common';
+import { UsersService } from 'src/users/users.service';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { uploadDto } from './upload.dto';
 
 @Controller('upload')
 export class UploadController {
-    constructor(private readonly uploadService: UploadService) { }
+    constructor(private readonly uploadService: UploadService, private userService: UsersService) { }
 
+    @UseGuards(AuthGuard)
     @Post()
     @UseInterceptors(
         FileInterceptor('file', {
@@ -37,11 +44,16 @@ export class UploadController {
     )
     async uploadFile(
         @UploadedFile() file: Express.Multer.File,
-        @Body('logroId') logroId: string,) {
+        @Body() Body: uploadDto, @Req() req: AuthenticatedRequest) 
+        {
+        const { logro_id, puntos } = Body;
+        const  user_id = req.user.sub;
+        const puntosNumber = Number(puntos);
+
         if (!file) {
             throw new BadRequestException('File upload failed');
         }
-        console.log(logroId, "Achievement ID")
+        console.log(logro_id, "Achievement ID")
         const fileName = `${Date.now()}-${file.originalname}`
         
 
@@ -49,7 +61,7 @@ export class UploadController {
 
         const detectedLabels = await this.uploadService.processImageWithApiKey(imageBase64);
         console.log(detectedLabels, "Labels")
-        const achievementId = getAchievementId(logroId);
+        const achievementId = getAchievementId(logro_id);
 
         const expectedLabels = achievementId;
         console.log(expectedLabels, "Expected Labels")
@@ -57,6 +69,9 @@ export class UploadController {
 
         if (isValid) {
             const s3Url = await this.uploadService.uploadFileToS3(file.path, fileName);
+            console.log(user_id, logro_id);
+            await this.userService.addUserLogro(user_id, logro_id);
+            await this.userService.modifyUserScore(user_id, puntosNumber);
             return {
                 message: isValid
                     ? 'Felicidades ¡Logro completado!'
