@@ -19,7 +19,7 @@ export class UsersService {
         async getUserById(email: string): Promise<Usuarios> {
             return await this.prisma.usuarios.findUnique({
             where: {
-                email,
+                email: email,
             },
         });
         }

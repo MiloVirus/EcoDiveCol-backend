@@ -35,6 +35,7 @@ model DiveShop {
   actividades Actividades[]
   bookings    Bookings[]
   reviews     Reviews[]
+  rewards     Rewards[]
 }
 
 model Bookings {
@@ -87,3 +88,13 @@ model UsuariosOnLogros {
 
   @@unique([user_id, logro_id])
 }
+
+model Rewards {
+  reward_id    String   @id @default(uuid())
+  name         String
+  descripcion  String
+  puntos       Int
+  diveshop_id  String
+  diveshop     DiveShop @relation(fields: [diveshop_id], references: [diveshop_id])
+}
+
