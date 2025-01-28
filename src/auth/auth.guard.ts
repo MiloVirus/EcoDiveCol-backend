@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate{
         const token = this.extractTokenFromCookies(request) 
         if(!token)
         {
-            throw new UnauthorizedException()
+            throw new UnauthorizedException('No authentication token provided')
         }
         try {
             const payload = await this.jwtService.verifyAsync(
@@ -24,18 +24,21 @@ export class AuthGuard implements CanActivate{
                 }
             )
             request['user'] = payload
+            return true
         } catch(error) {
-            if (error instanceof TokenExpiredError) {
-                throw new UnauthorizedException('Token has expired, please log in again');
-            } else {
-                throw new UnauthorizedException('Invalid token');
-            }
+            this.handleAuthError(error)
         }
-        return true
     }
 
     private extractTokenFromCookies(request: Request): string | undefined {
         return request.cookies?.access_token
+    }
+
+    private handleAuthError(error: any): never {
+        if (error instanceof TokenExpiredError) {
+            throw new UnauthorizedException('Authentication session expired. Please log in again.')
+        }
+        throw new UnauthorizedException('Invalid authentication token')
     }
 
 }
