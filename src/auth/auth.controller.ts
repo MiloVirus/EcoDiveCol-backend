@@ -54,7 +54,9 @@ export class AuthController {
     @Get('profile')
     async getProfile(@Req() req: AuthProfileRequest) {
         const userProfile = await this.userService.getUserById(req.user.email);
-        return userProfile;
+
+        const { password, ...user } = userProfile;
+        return user;
         
     }
 

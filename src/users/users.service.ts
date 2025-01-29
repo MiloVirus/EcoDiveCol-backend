@@ -4,7 +4,6 @@ import { Usuarios } from '@prisma/client';
 import { UsuariosOnLogros } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './create-user.dto';
-import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UsersService {
@@ -24,17 +23,17 @@ export class UsersService {
         });
         }
 
-        async createUser(data: CreateUserDto): Promise<CreateUserDto>
+        async createUser(usuario: CreateUserDto): Promise<Usuarios>
         {
-            const hashedPassword = await bcrypt.hash(data.password, 10)
+            const hashedPassword = await bcrypt.hash(usuario.password, 10)
             const user = await this.prisma.usuarios.create({
                 data:
                 {
-                    ...data,
+                    ...usuario,
                     password: hashedPassword,
                 },
             })
-            return plainToInstance(CreateUserDto, user);
+            return user;
         }
 
         async deleteUser(user_id: string): Promise<Usuarios>
