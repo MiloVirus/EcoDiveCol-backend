@@ -95,6 +95,7 @@ model Rewards {
   descripcion  String
   puntos       Int
   diveshop_id  String
+  claimed      Boolean @default(false)
   diveshop     DiveShop @relation(fields: [diveshop_id], references: [diveshop_id])
 }
 

@@ -45,7 +45,7 @@ export class UsersService {
             })
         }
 
-        async modifyUserScore(user_id: string, curr_puntos: number): Promise<void> {
+        async modifyUserScore(user_id: string, curr_puntos: number, operation: string): Promise<void> {
         
             const user = await this.prisma.usuarios.findUnique({
                 where: { user_id },
@@ -57,12 +57,23 @@ export class UsersService {
             }
         
             const currentPoints = user.curr_puntos ?? 0; 
+
+            let finalOperation = 0;
+
+            if(operation === 'subtract')
+            {
+                finalOperation = currentPoints - curr_puntos
+            }
+            else if(operation === 'add')
+            {
+                finalOperation = currentPoints + curr_puntos
+            }
         
             await this.prisma.usuarios.update({
                 where: { user_id },
                 data: {
                     curr_puntos: {
-                        set: currentPoints + curr_puntos, 
+                        set: finalOperation, 
                     },
                 },
             });
@@ -81,8 +92,6 @@ export class UsersService {
                 logro_id: logro_id
         }
         })
-
-        
 
     }
     

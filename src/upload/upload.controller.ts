@@ -46,7 +46,7 @@ export class UploadController {
         @UploadedFile() file: Express.Multer.File,
         @Body() Body: uploadDto, @Req() req: AuthenticatedRequest) 
         {
-        const { logro_id, puntos } = Body;
+        const { logro_id, puntos, operation } = Body;
         const  user_id = req.user.sub;
         const puntosNumber = Number(puntos);
 
@@ -71,7 +71,7 @@ export class UploadController {
             const s3Url = await this.uploadService.uploadFileToS3(file.path, fileName);
             console.log(user_id, logro_id);
             await this.userService.addUserLogro(user_id, logro_id);
-            await this.userService.modifyUserScore(user_id, puntosNumber);
+            await this.userService.modifyUserScore(user_id, puntosNumber, operation);
             return {
                 message: isValid
                     ? 'Felicidades ¡Logro completado!'

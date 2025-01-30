@@ -13,8 +13,7 @@ export class DiveshopController {
             return await this.diveShopService.getDiveShops();
         } catch (error) {
             return error
-        }
-        
+        }   
     }
 
     @Post('create')

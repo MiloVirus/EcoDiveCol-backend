@@ -18,4 +18,13 @@ export class RewardsService {
         return await this.prisma.rewards.findMany()
     }
 
+    async claimReward(id: string)
+    {
+        return await this.prisma.rewards.update({
+            where: {reward_id: id},
+            data: {
+                claimed: true
+                } 
+        })
+    }
 }
