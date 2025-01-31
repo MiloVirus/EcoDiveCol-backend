@@ -23,6 +23,7 @@ model Usuarios {
   bookings        Bookings[]
   reviews         Reviews[]
   logs            UsuariosOnLogros[]
+  rewards         RewardsOnUsers[]
 }
 
 model DiveShop {
@@ -90,12 +91,24 @@ model UsuariosOnLogros {
 }
 
 model Rewards {
-  reward_id    String   @id @default(uuid())
+  reward_id    String           @id @default(uuid())
   name         String
   descripcion  String
   puntos       Int
   diveshop_id  String
-  claimed      Boolean @default(false)
-  diveshop     DiveShop @relation(fields: [diveshop_id], references: [diveshop_id])
+  diveshop     DiveShop        @relation(fields: [diveshop_id], references: [diveshop_id])
+  users        RewardsOnUsers[]
+}
+
+model RewardsOnUsers {
+  id         Int      @id @default(autoincrement())
+  user_id    String
+  reward_id  String
+  claimed    Boolean  @default(true)
+  fecha      DateTime @default(now())
+  reward     Rewards  @relation(fields: [reward_id], references: [reward_id])
+  user       Usuarios @relation(fields: [user_id], references: [user_id])
+
+  @@unique([user_id, reward_id])
 }
 

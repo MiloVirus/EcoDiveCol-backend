@@ -8,91 +8,84 @@ import { CreateUserDto } from './create-user.dto';
 @Injectable()
 export class UsersService {
 
-    constructor(private prisma: PrismaService){}
-    
-        async getAllUsers(): Promise<Usuarios[]>
-        {
-            return await this.prisma.usuarios.findMany()
-        }
+    constructor(private prisma: PrismaService) { }
 
-        async getUserById(email: string): Promise<Usuarios> {
-            return await this.prisma.usuarios.findUnique({
+    async getAllUsers(): Promise<Usuarios[]> {
+        return await this.prisma.usuarios.findMany()
+    }
+
+    async getUserById(email: string): Promise<Usuarios> {
+        return await this.prisma.usuarios.findUnique({
             where: {
                 email: email,
             },
         });
-        }
+    }
 
-        async createUser(usuario: CreateUserDto): Promise<Usuarios>
-        {
-            const hashedPassword = await bcrypt.hash(usuario.password, 10)
-            const user = await this.prisma.usuarios.create({
-                data:
-                {
-                    ...usuario,
-                    password: hashedPassword,
-                },
-            })
-            return user;
-        }
-
-        async deleteUser(user_id: string): Promise<Usuarios>
-        {
-            return await this.prisma.usuarios.delete({
-                where:{
-                    user_id,
-                },
-            })
-        }
-
-        async modifyUserScore(user_id: string, curr_puntos: number, operation: string): Promise<void> {
-        
-            const user = await this.prisma.usuarios.findUnique({
-                where: { user_id },
-                select: { curr_puntos: true },
-            });
-        
-            if (!user) {
-                throw new Error(`User with ID ${user_id} not found`);
-            }
-        
-            const currentPoints = user.curr_puntos ?? 0; 
-
-            let finalOperation = 0;
-
-            if(operation === 'subtract')
+    async createUser(usuario: CreateUserDto): Promise<Usuarios> {
+        const hashedPassword = await bcrypt.hash(usuario.password, 10)
+        const user = await this.prisma.usuarios.create({
+            data:
             {
-                finalOperation = currentPoints - curr_puntos
-            }
-            else if(operation === 'add')
-            {
-                finalOperation = currentPoints + curr_puntos
-            }
-        
-            await this.prisma.usuarios.update({
-                where: { user_id },
-                data: {
-                    curr_puntos: {
-                        set: finalOperation, 
-                    },
+                ...usuario,
+                password: hashedPassword,
+            },
+        })
+        return user;
+    }
+
+    async deleteUser(user_id: string): Promise<Usuarios> {
+        return await this.prisma.usuarios.delete({
+            where: {
+                user_id,
+            },
+        })
+    }
+
+    async modifyUserScore(user_id: string, puntos: number, operation: string): Promise<void> {
+
+        const user = await this.prisma.usuarios.findUnique({
+            where: { user_id },
+            select: { curr_puntos: true },
+        });
+
+        if (!user) {
+            throw new Error(`User with ID ${user_id} not found`);
+        }
+
+        const currentPoints = user.curr_puntos ?? 0;
+
+        let finalOperation = 0;
+
+        if (operation === 'subtract') {
+            finalOperation = currentPoints - puntos
+        }
+        else if (operation === 'add') {
+            finalOperation = currentPoints + puntos
+        }
+
+        await this.prisma.usuarios.update({
+            where: { user_id },
+            data: {
+                curr_puntos: {
+                    set: finalOperation,
                 },
-            });
-        }
+            },
+        });
+    }
 
-        async updateUser(): Promise<Usuarios[]>
-        {
-            return await this.prisma.usuarios.findMany()
-        }
+    async updateUser(): Promise<Usuarios[]> {
+        return await this.prisma.usuarios.findMany()
+    }
 
-        async addUserLogro(sub: string, logro_id: string): Promise<UsuariosOnLogros>
-        {
-            return this.prisma.usuariosOnLogros.create({
-            data:{
+    async addUserLogro(sub: string, logro_id: string): Promise<UsuariosOnLogros> {
+        return this.prisma.usuariosOnLogros.create({
+            data: {
                 user_id: sub,
                 logro_id: logro_id
-        }
+            }
         })
 
     }
-    
+
 }
