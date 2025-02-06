@@ -16,7 +16,7 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     @Post('login')
     async signIn(@Body() signInDto: SignInDto, @Res() res: Response) {
-        const { email, msg, token } = await this.authService.signIn(signInDto); 
+        const { email, msg, token, user } = await this.authService.signIn(signInDto); 
         console.log('Token generado:', token); 
 
         res.cookie('access_token', token, {
@@ -25,6 +25,17 @@ export class AuthController {
             sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000, 
             path: '/', 
+        });
+
+        res.cookie('user_data', JSON.stringify({
+            user_id: user.user_id,
+            first_name: user.first_name,
+            curr_puntos: user.curr_puntos
+        }), {
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: '/'
         });
 
         return res.json({
@@ -62,13 +73,21 @@ export class AuthController {
 
     @Post('logout')
     signOut(@Res() res: Response) {
+        // Clear auth token
         res.clearCookie('access_token', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
             path: '/',
         });
-        return res.status(200).json({ message: 'Logout Successful', isAuthenticated: false });
         
+        // Clear user data
+        res.clearCookie('user_data', {
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            path: '/',
+        });
+        
+        return res.status(200).json({ message: 'Logout Successful', isAuthenticated: false });
     }
 }

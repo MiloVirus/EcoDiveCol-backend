@@ -8,7 +8,7 @@ import { SignInDto } from './sign-in.dto';
 export class AuthService {
     constructor( private users: UsersService, private jwtService: JwtService){}
 
-    async signIn(signInDto: SignInDto): Promise<{email:string, msg:string, token: string}>
+    async signIn(signInDto: SignInDto): Promise<{email: string, msg: string, token: string, user: any}>
     {
         const {email, password} = signInDto
 
@@ -38,7 +38,8 @@ export class AuthService {
         return {
             msg: 'login successful',
             email,
-            token, 
+            token,
+            user 
         }
     }
 }
