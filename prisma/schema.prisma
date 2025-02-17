@@ -33,6 +33,7 @@ model DiveShop {
   phone       String
   email       String
   address     String
+  description String
   actividades Actividades[]
   bookings    Bookings[]
   reviews     Reviews[]
