@@ -25,6 +25,17 @@ export class DiveshopService {
             }
         });
     }
+
+    async unsetDiveShopAsFavorite(sub: string, diveShopId: string)
+    {
+        await this.prisma.diveShopOnUsuariosFavoritos.deleteMany({
+            where: {  
+                user_id: sub,
+                diveshop_id: diveShopId
+            }
+        });   
+    }
+
     async getDiveshopsForUser(userId: string): Promise<DiveShop[]> {
             const allRewards = await this.prisma.diveShop.findMany()
     
@@ -46,7 +57,7 @@ export class DiveshopService {
     
             return rewardsWithCompletion.sort((a, b) => {
                 if (a.favorite === b.favorite) return 0;
-                return a.favorite ? 1 : -1;
+                return a.favorite ? -1 : 1;
             })
         }
 }

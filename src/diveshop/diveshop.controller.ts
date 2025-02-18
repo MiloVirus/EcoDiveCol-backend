@@ -1,6 +1,6 @@
 import { Controller, UseGuards} from '@nestjs/common';
 import { DiveshopService } from './diveshop.service';
-import { Get, Post, Body } from '@nestjs/common';
+import { Get, Post, Body, Delete } from '@nestjs/common';
 import { DiveShop } from '@prisma/client';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Req } from '@nestjs/common';
@@ -56,4 +56,21 @@ export class DiveshopController {
             return error
         }
     }
+
+    @UseGuards(AuthGuard)
+    @Delete('unsetFavorite')
+    async unsetFavorite(@Req() req:AuthenticatedRequest, @Body() data: {diveShopId: string})
+    {
+        try {
+            const sub = req.user.sub;
+            const dive_id = data.diveShopId
+
+            console.log(dive_id)
+            const res = await this.diveShopService.unsetDiveShopAsFavorite(sub, dive_id)
+            return res
+        } catch (error) {
+            return error
+        }
+    }
+
 }

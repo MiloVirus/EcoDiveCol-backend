@@ -35,6 +35,7 @@ model DiveShop {
   email       String
   address     String
   description String
+  image       String
   actividades Actividades[]
   bookings    Bookings[]
   reviews     Reviews[]
