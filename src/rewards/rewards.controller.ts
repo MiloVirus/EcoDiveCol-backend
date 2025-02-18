@@ -24,7 +24,7 @@ export class RewardsController {
 
     @Post('claim')
     @UseGuards(AuthGuard)
-    async claimRewards(@Req() req: AuthenticatedRequest, @Body() data: { reward_id: string})
+    async claimRewards(@Req() req: AuthenticatedRequest, @Body() data: {reward_id: string})
     {
         try
         {

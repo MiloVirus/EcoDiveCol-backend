@@ -16,4 +16,37 @@ export class DiveshopService {
     async getDiveShops() {
         return await this.prisma.diveShop.findMany();
     }
+
+    async setDiveShoptoFavorite(sub: string, diveShopId: string) {
+        return await this.prisma.diveShopOnUsuariosFavoritos.create({
+            data: {
+                user_id: sub,
+                diveshop_id: diveShopId
+            }
+        });
+    }
+    async getDiveshopsForUser(userId: string): Promise<DiveShop[]> {
+            const allRewards = await this.prisma.diveShop.findMany()
+    
+            const claimedRewards = await this.prisma.diveShopOnUsuariosFavoritos.findMany({
+                where: {
+                    user_id: userId,
+                    favorito: true
+                }
+            })
+    
+            const rewardsWithCompletion = allRewards.map((reward) => (
+                {
+                    ...reward,
+                    favorite: claimedRewards.some(
+                        (claimedReward) => claimedReward.diveshop_id === reward.diveshop_id
+                    )
+                }
+            ))
+    
+            return rewardsWithCompletion.sort((a, b) => {
+                if (a.favorite === b.favorite) return 0;
+                return a.favorite ? 1 : -1;
+            })
+        }
 }

@@ -85,7 +85,6 @@ export class UsersService {
                 logro_id: logro_id
             }
         })
-
     }
 
 }

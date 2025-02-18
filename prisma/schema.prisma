@@ -24,6 +24,7 @@ model Usuarios {
   reviews         Reviews[]
   logs            UsuariosOnLogros[]
   rewards         RewardsOnUsers[]
+  favoritos       DiveShopOnUsuariosFavoritos[]
 }
 
 model DiveShop {
@@ -38,6 +39,7 @@ model DiveShop {
   bookings    Bookings[]
   reviews     Reviews[]
   rewards     Rewards[]
+  favoritos   DiveShopOnUsuariosFavoritos[]
 }
 
 model Bookings {
@@ -111,5 +113,17 @@ model RewardsOnUsers {
   user       Usuarios @relation(fields: [user_id], references: [user_id])
 
   @@unique([user_id, reward_id])
+}
+
+model DiveShopOnUsuariosFavoritos {
+  id         Int      @id @default(autoincrement())
+  user_id    String
+  diveshop_id String
+  favorito   Boolean  @default(true)
+  fecha      DateTime @default(now())
+  diveshop   DiveShop @relation(fields: [diveshop_id], references: [diveshop_id])
+  usuario    Usuarios @relation(fields: [user_id], references: [user_id])
+
+  @@unique([user_id, diveshop_id])
 }
 
