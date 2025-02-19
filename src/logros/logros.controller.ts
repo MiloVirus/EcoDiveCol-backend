@@ -1,5 +1,5 @@
 import { Controller, Get, UseGuards, Req, UnauthorizedException } from '@nestjs/common'
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import { LogrosService } from './logros.service';
 import { AuthenticatedRequest } from 'src/common/interfaces/request.interface';
 

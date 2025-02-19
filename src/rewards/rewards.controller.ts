@@ -2,8 +2,8 @@ import { Controller } from '@nestjs/common';
 import { RewardsService } from './rewards.service';
 import { Body, Post, Get, NotFoundException, UseGuards, Req } from '@nestjs/common';
 import { Rewards } from '@prisma/client';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { AuthenticatedRequest } from 'src/common/interfaces/request.interface';
+import { AuthGuard } from '../auth/auth.guard';
+import { AuthenticatedRequest } from '../common/interfaces/request.interface';
 
 @Controller('rewards')
 export class RewardsController {

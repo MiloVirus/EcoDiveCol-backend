@@ -11,11 +11,11 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { getAchievementId } from 'src/utils/labels';
-import { AuthenticatedRequest } from 'src/common/interfaces/request.interface';
+import { getAchievementId } from '../utils/labels';
+import { AuthenticatedRequest } from '../common/interfaces/request.interface';
 import { Req, Res } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { UsersService } from '../users/users.service';
+import { AuthGuard } from '../auth/auth.guard';
 import { uploadDto } from './upload.dto';
 
 @Controller('upload')

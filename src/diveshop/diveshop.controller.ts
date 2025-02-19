@@ -2,7 +2,7 @@ import { Controller, UseGuards} from '@nestjs/common';
 import { DiveshopService } from './diveshop.service';
 import { Get, Post, Body, Delete } from '@nestjs/common';
 import { DiveShop } from '@prisma/client';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import { Req } from '@nestjs/common';
 import { AuthenticatedRequest } from 'src/common/interfaces/request.interface';
 

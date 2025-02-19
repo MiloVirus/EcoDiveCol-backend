@@ -4,8 +4,8 @@ import { SignInDto } from './sign-in.dto';
 import { AuthGuard } from './auth.guard';
 import { Response, Request } from 'express';
 import * as jwt from 'jsonwebtoken'
-import { AuthProfileRequest } from 'src/common/interfaces/request.interface';
-import { UsersService } from 'src/users/users.service';
+import { AuthProfileRequest } from '../common/interfaces/request.interface';
+import { UsersService } from '../users/users.service';
 
 
 
