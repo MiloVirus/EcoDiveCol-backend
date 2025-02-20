@@ -47,7 +47,7 @@ export class AuthController {
     @Get('check')
     checkAuth(@Req() req: Request, @Res() res: Response) {
         const token = req.cookies['access_token'];
-
+        console.log(token)
         if (token) {
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
