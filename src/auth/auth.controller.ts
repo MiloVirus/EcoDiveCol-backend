@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { SignInDto } from './sign-in.dto';
 import { AuthGuard } from './auth.guard';
 import { Response, Request } from 'express';
-import * as jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { AuthProfileRequest } from '../common/interfaces/request.interface';
 import { UsersService } from '../users/users.service';
 
