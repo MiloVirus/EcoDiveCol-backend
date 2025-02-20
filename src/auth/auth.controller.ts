@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { SignInDto } from './sign-in.dto';
 import { AuthGuard } from './auth.guard';
 import { Response, Request } from 'express';
-import jwt from 'jsonwebtoken'
+import * as jwt from 'jsonwebtoken';
 import { AuthProfileRequest } from '../common/interfaces/request.interface';
 import { UsersService } from '../users/users.service';
 
@@ -46,20 +46,22 @@ export class AuthController {
 
     @Get('check')
     checkAuth(@Req() req: Request, @Res() res: Response) {
-        const token = req.cookies['access_token'];
-        console.log(token)
-        if (token) {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const token = req.cookies['access_token'];
+    console.log('Token recibido:', token);
 
-            const userInfo = {
-                id: decoded.sub,
-                
-            }
-            return res.json({ isAuthenticated: true, user: userInfo });
-        } else {
-            return res.status(HttpStatus.UNAUTHORIZED).json({ isAuthenticated: false, message: 'Token inválido o expirado' });
-        }
+    if (!token) {
+        return res.status(HttpStatus.UNAUTHORIZED).json({ isAuthenticated: false, message: 'No token provided' });
     }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET) as { sub: string };
+
+        return res.json({ isAuthenticated: true, user: { id: decoded.sub } });
+    } catch (error) {
+        console.error('Error al verificar el token:', error.message);
+        return res.status(HttpStatus.UNAUTHORIZED).json({ isAuthenticated: false, message: 'Token inválido o expirado' });
+    }
+}
 
     @UseGuards(AuthGuard)
     @Get('profile')
