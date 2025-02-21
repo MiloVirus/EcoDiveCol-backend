@@ -1,6 +1,6 @@
 const labelsByAchievementId: { [key: string]: string[] } = {
     'achievement1': ['Fish Hook', 'Fish Net', 'Fish Line', 'Net'],
-    'achievement2': ['Litter', 'Plastic', 'Trash', 'Beach', 'Bottle'],
+    'achievement2': ['Litter', 'Plastic', 'Trash', 'Beach', 'Bottle', 'Picking up trash', 'People cleaning', 'Beach cleaning'],
     'achievement3': ['Lion Fish', 'Fish', 'Spear', 'Dead Fish'],
     'achievement4': ['Forest', 'Trees', 'Wildlife', 'Nature', 'Hiking'],
     'achievement5': ['Energy', 'Solar', 'Wind', 'Renewable', 'Sustainable']
