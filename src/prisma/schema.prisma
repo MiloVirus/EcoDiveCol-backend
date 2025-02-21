@@ -18,7 +18,7 @@ model Usuarios {
   password        String
   PADI_NAUI_ID    String?            @unique
   all_time_puntos Int?
-  curr_puntos     Int?
+  curr_puntos     Int?              @default(5000)
   rango           String?
   bookings        Bookings[]
   reviews         Reviews[]
