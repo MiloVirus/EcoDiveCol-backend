@@ -32,8 +32,8 @@ export class AuthController {
             first_name: user.first_name,
             curr_puntos: user.curr_puntos
         }), {
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            secure: true,
+            sameSite: 'none',
             maxAge: 7 * 24 * 60 * 60 * 1000,
             path: '/'
         });
